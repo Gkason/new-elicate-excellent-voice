@@ -28,7 +28,7 @@ export default function LandingPage(props: any) {
     return <Page id={'landing'} showSubHeader={true}>
         <Container>
             <p>
-                <FormattedMessage defaultMessage={'Hello, how can I help you today?'}
+                <FormattedMessage defaultMessage={'Hello, how can I help you with Math today?'}
                     description="A friendly message that appears at the start of new chat sessions" />
             </p>
             {!openAIApiKey && !isProxySupported() && (
