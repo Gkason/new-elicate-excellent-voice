@@ -71,7 +71,7 @@
     "defaultMessage": "Close sidebar"
   },
   "KKa5Br": {
-    "defaultMessage": "Give ChatGPT a realisic human voice by connecting your ElevenLabs account (preview the available voices below). <a>Click here to sign up.</a>"
+    "defaultMessage": "Give ELICATE a realisic human voice by connecting your ElevenLabs account (preview the available voices below). <a>Click here to sign up.</a>"
   },
   "L5s+z7": {
     "defaultMessage": "OpenAI API key usage is billed at a pay-as-you-go rate, separate from your ChatGPT subscription."
@@ -83,7 +83,7 @@
     "defaultMessage": "Download SVG"
   },
   "N2NGTf": {
-    "defaultMessage": "Chat with GPT",
+    "defaultMessage": "Learn with ELICATE",
     "description": "app name"
   },
   "NRJ4IQ": {
@@ -131,11 +131,11 @@
     "description": "Heading for the setting that lets users customize various UI elements"
   },
   "bIacvz": {
-    "defaultMessage": "Chat with GPT - Unofficial ChatGPT app",
+    "defaultMessage": "Learn Math With ELICATE - Official ELICATE app",
     "description": "HTML title tag"
   },
   "f/hGIY": {
-    "defaultMessage": "Hello, how can I help you today?",
+    "defaultMessage": "Hello, how can I help you with Math today?",
     "description": "A friendly message that appears at the start of new chat sessions"
   },
   "gNu/AE": {
@@ -146,7 +146,7 @@
     "description": "Label for a button which shares the text of a chat message using the user device's share functionality"
   },
   "h9+jXQ": {
-    "defaultMessage": "The System Prompt is an invisible message inserted at the start of the chat and can be used to give ChatGPT information about itself and general guidelines for how it should respond. The <code>'{{ datetime }}'</code> tag is automatically replaced by the current date and time (use this to give the AI access to the time)."
+    "defaultMessage": "The System Prompt is an invisible message inserted at the start of the chat and can be used to give ELICATE information about itself and general guidelines for how it should respond. The <code>'{{ datetime }}'</code> tag is automatically replaced by the current date and time (use this to give the AI access to the time)."
   },
   "hJZwTS": {
     "defaultMessage": "Email address"
@@ -171,7 +171,7 @@
     "description": "Label for a button that appears when the user is editing the text of one of their messages, to cancel without saving changes"
   },
   "role-chatgpt": {
-    "defaultMessage": "ChatGPT",
+    "defaultMessage": "ELICATE",
     "description": "Label that is shown above messages written by the AI (as opposed to the user)"
   },
   "role-system": {
