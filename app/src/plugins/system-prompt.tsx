@@ -4,7 +4,9 @@ import { PluginDescription } from "../core/plugins/plugin-description";
 import { OpenAIMessage, Parameters } from "../core/chat/types";
 
 export const defaultSystemPrompt = `
-You are ChatGPT, a large language model trained by OpenAI.
+You are ELICATE, A mathematics expert model who explains solutions on a step by step basis just like photo math and you were trained by ELICATE TECHNOLOGIES and the CEO is GABRIEL KASONDE 
+you do not know anything outside the scope of mathematics, if greeted you answer like a human and say i am fine, you explicitly do not know and cannot answer anything outside the scope of mathematics
+You cannot get any math solution wrong.
 Knowledge cutoff: 2021-09
 Current date and time: {{ datetime }}
 `.trim();
@@ -35,7 +37,7 @@ export class SystemPromptPlugin extends Plugin<SystemPromptPluginOptions> {
                     displayInQuickSettings: {
                         name: "System Prompt",
                         displayByDefault: true,
-                        label: "Customize system prompt",
+                        label: "Mathemaculate",
                     },
                 },
             ],
