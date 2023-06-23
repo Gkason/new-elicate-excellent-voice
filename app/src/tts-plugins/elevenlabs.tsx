@@ -78,7 +78,7 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
                         description: <>
                             <p>
                                 <FormattedMessage
-                                    defaultMessage="Give ChatGPT a realisic human voice by connecting your ElevenLabs account (preview the available voices below). <a>Click here to sign up.</a>"
+                                    defaultMessage="Give ELICATE a realisic human voice by connecting your ElevenLabs account (preview the available voices below). <a>Click here to sign up.</a>"
                                     values={{
                                         a: (chunks: any) => <a href="https://beta.elevenlabs.io" target="_blank" rel="noreferrer">{chunks}</a>
                                     }} />
