@@ -6,13 +6,13 @@ export interface MenuItem {
 
 export const secondaryMenu: MenuItem[] = [
     {
-        label: "Discord",
-        link: "https://discord.gg/mS5QvKykvv",
+        label: "Facebook",
+        link: "https://web.facebook.com/elicatetechnologies",
         icon: "discord fab",
     },
     {
-        label: "GitHub",
-        link: "https://github.com/cogentapps/chat-with-gpt",
+        label: "GK APPS",
+        link: "https://gkapps.webflow.io/",
         icon: "github fab",
     },
 ];
