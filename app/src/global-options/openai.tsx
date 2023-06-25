@@ -1,32 +1,23 @@
-import { FormattedMessage } from "react-intl";
 import { OptionGroup } from "../core/options/option-group";
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 export const openAIOptions: OptionGroup = {
-    id: 'openai',
-    options: [
-        {
-            id: 'apiKey',
-            defaultValue: "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",
-            displayOnSettingsScreen: "user",
-            displayAsSeparateSection: false,
-            renderProps: () => ({
-                type: "password",
-                label: "Your OpenAI API Key",
-                placeholder: "sk-************************************************",
-                description: <>
-                    <p>
-                        <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
-                            <FormattedMessage defaultMessage="Find your API key here." description="Label for the link that takes the user to the page on the OpenAI website where they can find their API key." />
-                        </a>
-                    </p>
-                    <p>
-                        <FormattedMessage defaultMessage="Your API key is stored only on this device and never transmitted to anyone except OpenAI." />
-                    </p>
-                    <p>
-                        <FormattedMessage defaultMessage="OpenAI API key usage is billed at a pay-as-you-go rate, separate from your ChatGPT subscription." />
-                    </p>
-                </>,
-            }),
-        },
-    ],
-}
+  id: 'openai',
+  apiKey: process.env.OPENAI_API_KEY,
+  options: [
+    {
+      id: 'apiKey',
+      displayOnSettingsScreen: 'user',
+      displayAsSeparateSection: false,
+      renderProps: () => ({
+        type: 'password',
+        label: 'Your OpenAI API Key',
+        placeholder: 'sk-************************************************',
+        description: <></>,
+      }),
+    },
+  ],
+};

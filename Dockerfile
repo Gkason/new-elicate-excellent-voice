@@ -38,6 +38,10 @@ WORKDIR /app
 #     libssl-dev \
 #     openssl
 
+# Set environment variables
+ENV NODE_ENV=production
+ENV OPENAI_API_KEY=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
+
 COPY ./server/package.json ./server/tsconfig.json ./
 
 # Install Node.js dependencies from package.json
