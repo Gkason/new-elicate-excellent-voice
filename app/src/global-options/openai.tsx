@@ -6,9 +6,9 @@ export const openAIOptions: OptionGroup = {
     options: [
         {
             id: 'apiKey',
-            defaultValue: "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",
+            defaultValue: "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",
             displayOnSettingsScreen: "user",
-            displayAsSeparateSection: true,
+            displayAsSeparateSection: false,
             renderProps: () => ({
                 type: "password",
                 label: "Your OpenAI API Key",
@@ -26,8 +26,7 @@ export const openAIOptions: OptionGroup = {
                         <FormattedMessage defaultMessage="OpenAI API key usage is billed at a pay-as-you-go rate, separate from your ChatGPT subscription." />
                     </p>
                 </>,
-                disabled: true, // Disables the input field for the API key option
             }),
         },
     ],
-};
+}
