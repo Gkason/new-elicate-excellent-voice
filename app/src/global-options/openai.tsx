@@ -1,4 +1,3 @@
-import { FormattedMessage } from "react-intl";
 import { OptionGroup } from "../core/options/option-group";
 
 export const openAIOptions: OptionGroup = {
@@ -13,8 +12,6 @@ export const openAIOptions: OptionGroup = {
                 type: "password",
                 label: "Your OpenAI API Key",
                 placeholder: "sk-************************************************",
-                description: <>
-                </>,
             }),
         },
     ],
