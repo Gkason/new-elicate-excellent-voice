@@ -48,7 +48,7 @@ COPY ./server/src ./src
 
 RUN CI=true sh -c "cd /app && \
     mkdir data && \
-    echo 'openai:\n  apiKey: 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\n\n\
+    echo 'openai:\n  apiKey: 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\n\n\
     elevenlabs:\n  apiKey: 915663941442f1a2a426fe7287e82bee' > /app/data/config.YAML && \
     npm run start && \
     rm -rf data"

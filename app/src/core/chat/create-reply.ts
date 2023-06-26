@@ -58,7 +58,7 @@ export class ReplyRequest extends EventEmitter {
         this.timer = setInterval(() => {
             const sinceLastChunk = Date.now() - this.lastChunkReceivedAt;
             if (sinceLastChunk > 30000 && !this.done) {
-                this.onError('no response from OpenAI in the last 30 seconds');
+                this.onError('no response from ELICATE TECHNOLOGIES in the last 30 seconds');
             }
         }, 2000);
     }
@@ -160,7 +160,7 @@ export class ReplyRequest extends EventEmitter {
         clearInterval(this.timer);
         this.cancelSSE?.();
 
-        this.content += `\n\nI'm sorry, I'm having trouble connecting to OpenAI (${error || 'no response from the API'}). Please make sure you've entered your OpenAI API key correctly and try again.`;
+        this.content += `\n\nI'm sorry, I'm having trouble connecting ELICATE TECHNOLOGIES servers (${error || 'no response from the our API'}). Please wait while rectify this issue`;
         this.content = this.content.trim();
 
         this.yChat.setMessageContent(this.replyID, this.content);
