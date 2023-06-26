@@ -46,7 +46,13 @@ RUN npm install
 # Copy the rest of the application code into the working directory
 COPY ./server/src ./src
 
-RUN CI=true sh -c "cd /app && mkdir data && npm run start && rm -rf data"
+RUN CI=true sh -c "cd /app && \
+    mkdir data && \
+    echo 'openai:\n  apiKey: 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\n\n\
+    elevenlabs:\n  apiKey: 915663941442f1a2a426fe7287e82bee' > /app/data/config.YAML && \
+    npm run start && \
+    rm -rf data"
+
 
 COPY --from=build /app/build /app/public
 
