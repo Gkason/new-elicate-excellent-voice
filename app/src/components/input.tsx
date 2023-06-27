@@ -14,278 +14,179 @@ import QuickSettings from './quick-settings';
 import { useOption } from '../core/options/use-option';
 
 const Container = styled.div`
-background: #292933;
-border-top: thin solid #393933;
-padding: 1rem 1rem 0 1rem;
-.inner {
+  background: #292933;
+  border-top: thin solid #393933;
+  padding: 1rem 1rem 0 1rem;
+  .inner {
     max-width: 50rem;
     margin: auto;
     text-align: right;
-}
+  }
 
-.settings-button {
+  .settings-button {
     margin: 0.5rem -0.4rem 0.5rem 1rem;
     font-size: 0.7rem;
     color: #999;
-}
+  }
 `;
 
 export declare type OnSubmit = (name?: string) => Promise<boolean>;
 
 export interface MessageInputProps {
-disabled?: boolean;
+  disabled?: boolean;
 }
 
 export default function MessageInput(props: MessageInputProps) {
-const message = useAppSelector(selectMessage);
-const [recording, setRecording] = useState(false);
-const [speechError, setSpeechError] = useState<string | null>(null);
-const hasVerticalSpace = useMediaQuery('(min-height: 1000px)');
-const [useOpenAIWhisper] = useOption<boolean>('speech-recognition', 'use-whisper');
-const [openAIApiKey] = useOption<string>('openai', 'apiKey');
+  const message = useAppSelector(selectMessage);
+  const [recording, setRecording] = useState(false);
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const hasVerticalSpace = useMediaQuery('(min-height: 1000px)');
+  const [useOpenAIWhisper] = useOption<boolean>('speech-recognition', 'use-whisper');
+  const [openAIApiKey] = useOption<string>('openai', 'apiKey');
 
-const [initialMessage, setInitialMessage] = useState('');
-const {
+  const [initialMessage, setInitialMessage] = useState('');
+  const {
     transcribing,
     transcript,
     startRecording,
     stopRecording,
-} = useWhisper({
-    apiKey: openAIApiKey || ' ',
-    streaming: false,
-});
+  } = speechRecognition({
+    continuous: true,
+    interimResults: true,
+    lang: 'en-US',
+  });
 
-const navigate = useNavigate();
-const context = useAppContext();
-const dispatch = useAppDispatch();
-const intl = useIntl();
+  const dispatch = useAppDispatch();
+  const intl = useIntl();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAppContext();
+  const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useAppSelector(selectSettingsTab);
 
-const tab = useAppSelector(selectSettingsTab);
+  const handleSubmit = useCallback(
+    async (name?: string) => {
+      if (!message.trim()) {
+        return false;
+      }
 
-const [showMicrophoneButton] = useOption<boolean>('speech-recognition', 'show-microphone');
-const [submitOnEnter] = useOption<boolean>('input', 'submit-on-enter');
+      const success = await dispatch(setMessage({ message, name }));
 
-const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(setMessage(e.target.value));
-}, [dispatch]);
+      if (success) {
+        setInitialMessage('');
+      }
 
-const pathname = useLocation().pathname;
+      return success;
+    },
+    [dispatch, message],
+  );
 
-const onSubmit = useCallback(async () => {
+  useEffect(() => {
+    if (transcript && !recording) {
+      handleSubmit();
+    }
+  }, [transcript, recording, handleSubmit]);
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSubmit();
+      }
+    },
+    [handleSubmit],
+  );
+
+  const handleStartRecording = useCallback(() => {
+    setRecording(true);
     setSpeechError(null);
+    startRecording();
+  }, [startRecording]);
 
-    const id = await context.onNewMessage(message);
-
-    if (id) {
-        if (!window.location.pathname.includes(id)) {
-            navigate('/chat/' + id);
-        }
-        dispatch(setMessage(''));
-    }
-}, [context, message, dispatch, navigate]);
-
-const onSpeechError = useCallback((e: any) => {
-    console.error('speech recognition error', e);
-    setSpeechError(e.message);
-
-    try {
-        speechRecognition?.stop();
-    } catch (e) {
-    }
-
-    try {
-        stopRecording();
-    } catch (e) { }
-
+  const handleStopRecording = useCallback(() => {
     setRecording(false);
-}, [stopRecording]);
+    stopRecording();
+  }, [stopRecording]);
 
-const onHideSpeechError = useCallback(() => setSpeechError(null), []);
+  const handleSpeechError = useCallback((error: SpeechRecognitionError) => {
+    setRecording(false);
+    setSpeechError(error.error);
+  }, []);
 
-const onSpeechStart = useCallback(async () => {
-    let granted = false;
-    let denied = false;
+  const handleSettingsButtonClick = useCallback(() => {
+    setQuickSettingsOpen(true);
+  }, []);
 
-    try {
-        const result = await navigator.permissions.query({ name: 'microphone' as any });
-        if (result.state == 'granted') {
-            granted = true;
-        } else if (result.state == 'denied') {
-            denied = true;
-        }
-    } catch (e) { }
+  const handleQuickSettingsClose = useCallback(() => {
+    setQuickSettingsOpen(false);
+  }, []);
 
-    if (!granted && !denied) {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-            stream.getTracks().forEach(track => track.stop());
-            granted = true;
-        } catch (e) {
-            denied = true;
-        }
-    }
+  const handleSettingsTabChange = useCallback(
+    (tab: string) => {
+      setSettingsTab(tab);
+    },
+    [setSettingsTab],
+  );
 
-    if (denied) {
-        onSpeechError(new Error('speech permission was not granted'));
-        return;
-    }
+  const handleOpenAIApiKeyPanel = useCallback(() => {
+    dispatch(openOpenAIApiKeyPanel());
+  }, [dispatch]);
 
-    try {
-        if (!recording) {
-            setRecording(true);
+  const hotkeyHandler = useMemo(
+    () =>
+      getHotkeyHandler({
+        'mod+enter': handleSubmit,
+        'mod+shift+enter': handleStartRecording,
+      }),
+    [handleSubmit, handleStartRecording],
+  );
 
-            if (useOpenAIWhisper || !supportsSpeechRecognition) {
-                if (!openAIApiKey) {
-                    dispatch(openOpenAIApiKeyPanel());
-                    return false;
-                }
-                // recorder.start().catch(onSpeechError);
-                setInitialMessage(message);
-                await startRecording();
-            } else if (speechRecognition) {
-                const initialMessage = message;
+  useHotkeys(hotkeyHandler);
 
-                speechRecognition.continuous = true;
-                speechRecognition.interimResults = true;
+  const whisper = useWhisper({
+    apiKey: openAIApiKey,
+    useWhisper: useOpenAIWhisper,
+  });
 
-                speechRecognition.onresult = (event) => {
-                    let transcript = '';
-                    for (let i = 0; i < event.results.length; i++) {
-                        if (event.results[i].isFinal && event.results[i][0].confidence) {
-                            transcript += event.results[i][0].transcript;
-                        }
-                    }
-                    dispatch(setMessage(initialMessage + ' ' + transcript));
-                };
-
-                speechRecognition.start();
-            } else {
-                onSpeechError(new Error('not supported'));
-            }
-        } else {
-            if (useOpenAIWhisper || !supportsSpeechRecognition) {
-                await stopRecording();
-                setTimeout(() => setRecording(false), 500);
-            } else if (speechRecognition) {
-                speechRecognition.stop();
-                setRecording(false);
-            } else {
-                onSpeechError(new Error('not supported'));
-            }
-        }
-    } catch (e) {
-        onSpeechError(e);
-    }
-}, [recording, message, dispatch, onSpeechError, setInitialMessage, openAIApiKey]);
-
-useEffect(() => {
-    if (useOpenAIWhisper || !supportsSpeechRecognition) {
-        if (!transcribing && !recording && transcript?.text) {
-            dispatch(setMessage(initialMessage + ' ' + transcript.text));
-        }
-    }
-}, [initialMessage, transcript, recording, transcribing, useOpenAIWhisper, dispatch]);
-
-useHotkeys([
-    ['n', () => document.querySelector<HTMLTextAreaElement>('#message-input')?.focus()]
-]);
-
-const blur = useCallback(() => {
-    document.querySelector<HTMLTextAreaElement>('#message-input')?.blur();
-}, []);
-
-const rightSection = useMemo(() => {
-    return (
-        <div style={{
-            opacity: '0.8',
-            paddingRight: '0.5rem',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            width: '100%',
-        }}>
-            {context.generating && (<>
-                <Button variant="subtle" size="xs" compact onClick={() => {
-                    context.chat.cancelReply(context.currentChat.chat?.id, context.currentChat.leaf!.id);
-                }}>
-                    <FormattedMessage defaultMessage={"Cancel"} description="Label for the button that can be clicked while the AI is generating a response to cancel generation" />
-                </Button>
-                <Loader size="xs" style={{ padding: '0 0.8rem 0 0.5rem' }} />
-            </>)}
-            {!context.generating && (
-                <>
-                    {showMicrophoneButton && <Popover width={200} position="bottom" withArrow shadow="md" opened={speechError !== null}>
-                        <Popover.Target>
-                            <ActionIcon size="xl"
-                                onClick={onSpeechStart}>
-                                {transcribing && <Loader size="xs" />}
-                                {!transcribing && <i className="fa fa-microphone" style={{ fontSize: '90%', color: recording ? 'red' : 'inherit' }} />}
-                            </ActionIcon>
-                        </Popover.Target>
-                        <Popover.Dropdown>
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
-                            }}>
-                                <p style={{
-                                    fontFamily: `"Work Sans", sans-serif`,
-                                    fontSize: '0.9rem',
-                                    textAlign: 'center',
-                                    marginBottom: '0.5rem',
-                                }}>
-                                    Sorry, an error occured trying to record audio.
-                                </p>
-                                <Button variant="light" size="xs" fullWidth onClick={onHideSpeechError}>
-                                    Close
-                                </Button>
-                            </div>
-                        </Popover.Dropdown>
-                    </Popover>}
-                    <ActionIcon size="xl"
-                        onClick={onSubmit}>
-                        <i className="fa fa-paper-plane" style={{ fontSize: '90%' }} />
-                    </ActionIcon>
-                </>
-            )}
+  return (
+    <Container>
+      <div className="inner">
+        <Textarea
+          value={message}
+          onChange={(event) => setInitialMessage(event.currentTarget.value)}
+          onKeyDown={handleKeyDown}
+          disabled={props.disabled}
+          placeholder={intl.formatMessage({ id: 'messageInput.placeholder' })}
+          style={{ resize: 'none' }}
+          rows={1}
+        />
+        <div>
+          {recording ? (
+            <Button onClick={handleStopRecording} color="red">
+              <FormattedMessage id="messageInput.stopRecording" defaultMessage="Stop" />
+            </Button>
+          ) : (
+            <Button onClick={handleStartRecording}>
+              <FormattedMessage id="messageInput.startRecording" defaultMessage="Speak" />
+            </Button>
+          )}
+          {speechError && <div>{speechError}</div>}
+          <Button
+            className="settings-button"
+            variant="link"
+            onClick={handleSettingsButtonClick}
+          >
+            <FormattedMessage id="messageInput.settings" defaultMessage="Settings" />
+          </Button>
+          <QuickSettings
+            open={quickSettingsOpen}
+            onClose={handleQuickSettingsClose}
+            activeTab={settingsTab}
+            onTabChange={handleSettingsTabChange}
+            onOpenAIApiKeyPanel={handleOpenAIApiKeyPanel}
+          />
         </div>
-    );
-}, [recording, transcribing, onSubmit, onSpeechStart, props.disabled, context.generating, speechError, onHideSpeechError, showMicrophoneButton]);
-
-const disabled = context.generating;
-
-const isLandingPage = pathname === '/';
-if (context.isShare || (!isLandingPage && !context.id)) {
-    return null;
-}
-
-const hotkeyHandler = useMemo(() => {
-    const keys = [
-        ['Escape', blur, { preventDefault: true }],
-        ['ctrl+Enter', onSubmit, { preventDefault: true }],
-
-    ];
-    if (submitOnEnter) {
-        keys.unshift(['Enter', onSubmit, { preventDefault: true }]);
-    }
-    const handler = getHotkeyHandler(keys as any);
-    return handler;
-}, [onSubmit, blur, submitOnEnter]);
-
-return <Container>
-    <div className="inner">
-        <Textarea disabled={props.disabled || disabled}
-            id="message-input"
-            autosize
-            minRows={(hasVerticalSpace || context.isHome) ? 3 : 2}
-            maxRows={12}
-            placeholder={intl.formatMessage({ defaultMessage: "Enter a message here..." })}
-            value={message}
-            onChange={onChange}
-            rightSection={rightSection}
-            rightSectionWidth={context.generating ? 100 : 55}
-            onKeyDown={hotkeyHandler} />
-        <QuickSettings key={tab} />
-    </div>
-</Container>;
+      </div>
+    </Container>
+  );
 }
