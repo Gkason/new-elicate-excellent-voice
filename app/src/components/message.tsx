@@ -283,7 +283,7 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             <Button variant="subtle" size="sm" compact onClick={() => context.regenerateMessage(props.message)}>
                                 <i className="fa fa-refresh" />
                                 <span>
-                                    <FormattedMessage defaultMessage="Regenerate" description="Label for the button used to ask ELICATE to regenerate one of its messages. Since message generations are stochastic, the resulting message will be different." />
+                                    <FormattedMessage defaultMessage="Regenerate" description="Label for the button used to ask the AI to regenerate one of its messages. Since message generations are stochastic, the resulting message will be different." />
                                 </span>
                             </Button>
                         )}
